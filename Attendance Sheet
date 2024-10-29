@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Sheet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .message {
+            text-align: center;
+            margin-top: 15px;
+        }
+        .attendance-list {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Attendance Sheet</h2>
+    
+    <!-- Developer ID Creation Section -->
+    <h3>Create Teacher ID</h3>
+    <input type="text" id="developer-id" placeholder="Enter Teacher ID (e.g., T001)">
+    <input type="text" id="developer-name" placeholder="Enter Teacher Name">
+    <button onclick="createTeacherId()">Create ID</button>
+
+    <!-- Submit Attendance Section -->
+    <h3>Submit Attendance</h3>
+    <label for="teacher-id">Enter your ID:</label>
+    <input type="text" id="teacher-id" placeholder="e.g., T001">
+    <button onclick="submitAttendance()">Submit</button>
+    <div class="message" id="message"></div>
+
+    <!-- Attendance List Section -->
+    <div class="attendance-list" id="attendance-list" style="display: none;">
+        <h3>Attendance Submitted:</h3>
+        <ul id="attendance-record"></ul>
+    </div>
+</div>
+
+<script>
+    const teachers = {};
+    const attendanceRecords = [];
+
+    function createTeacherId() {
+        const developerId = document.getElementById("developer-id").value.trim();
+        const developerName = document.getElementById("developer-name").value.trim();
+        const messageDiv = document.getElementById("message");
+
+        // Validate that the ID contains only letters and numbers
+        if (!/^[A-Za-z]\d+$/.test(developerId)) {
+            messageDiv.textContent = "ID must start with a letter followed by numbers only. Please try again.";
+            messageDiv.style.color = "red";
+            return;
+        }
+
+        if (developerId && !teachers[developerId]) {
+            // Add new teacher ID and name to the list
+            teachers[developerId] = developerName;
+            messageDiv.textContent = `Teacher ID ${developerId} has been created for ${developerName}!`;
+            messageDiv.style.color = "green";
+            document.getElementById("developer-id").value = ""; // Clear input
+            document.getElementById("developer-name").value = ""; // Clear name input
+        } else {
+            messageDiv.textContent = "Invalid or already existing ID. Please try again.";
+            messageDiv.style.color = "red";
+        }
+    }
+
+    function submitAttendance() {
+        const teacherId = document.getElementById("teacher-id").value.trim();
+        const messageDiv = document.getElementById("message");
+
+        // Validate that the ID contains only letters and numbers
+        if (!/^[A-Za-z]\d+$/.test(teacherId)) {
+            messageDiv.textContent = "ID must start with a letter followed by numbers only. Please try again.";
+            messageDiv.style.color = "red";
+            return;
+        }
+
+        if (teachers[teacherId]) {
+            const teacherName = teachers[teacherId];
+            messageDiv.textContent = `Attendance for ${teacherName} (${teacherId}) has been recorded.`;
+            messageDiv.style.color = "green";
+
+            // Record attendance
+            attendanceRecords.push(`${teacherName} (${teacherId})`);
+            displayAttendanceRecords(); // Update the attendance list
+        } else {
+            messageDiv.textContent = "Invalid ID. Please try again.";
+            messageDiv.style.color = "red";
+        }
+    }
+
+    function displayAttendanceRecords() {
+        const attendanceList = document.getElementById("attendance-record");
+        attendanceList.innerHTML = ""; // Clear current list
+
+        attendanceRecords.forEach(record => {
+            const li = document.createElement("li");
+            li.textContent = record; // Add attendance record to the list
+            attendanceList.appendChild(li);
+        });
+        document.getElementById("attendance-list").style.display = "block"; // Show attendance list
+    }
+</script>
+
+</body>
+</html>
